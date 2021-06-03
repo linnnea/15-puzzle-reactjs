@@ -20,3 +20,18 @@ body {
   place-items: center;
   height: 100vh;
 }
+
+.board {
+  position: relative;
+  padding: 0;
+}
+
+.tile {
+  position: absolute;
+  list-style-type: none;
+  display: grid;
+  place-items: center;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+}
