@@ -31,4 +31,4 @@ function Tile(props) {
   )
 }
 
-export default Tile
+export default Tile;
