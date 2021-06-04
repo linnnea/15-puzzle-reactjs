@@ -3,7 +3,7 @@ import { TILE_SUM, ROW_SUM } from "./constants";
 import { getNumberPosition, getVisualPosition } from "./helpers/gameLogic";
 
 function Tile(props) {
-  const { tile, index, width, height } = props;
+  const { tile, index, width, height, tileClick } = props;
   const { row, col } = getNumberPosition(index);
   const visualPos = getVisualPosition(row, col, width, height);
 
@@ -24,6 +24,7 @@ function Tile(props) {
         opacity: tile === TILE_SUM - 1 ? 0 : 1,
       }}
       className="tile"
+      onClick={() => tileClick(index)}
     >
       {tile + 1}
     </li>
