@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { TILE_SUM, ROW_SUM, BOARD_SIZE } from "./constants";
 import Tile from './Tile';
+import { shuffle, canMoveTile, moveTile, isSolved } from './helpers/gameLogic';
 
 function Board() {
   const [ tiles, setTiles ] = useState([...Array(TILE_SUM).keys()]);
+  const [ isStarted, setIsStarted ] = useState(false);
 
   const pieceWidth = Math.round( BOARD_SIZE / ROW_SUM );
   const pieceHeight = Math.round( BOARD_SIZE / ROW_SUM );
@@ -11,6 +13,34 @@ function Board() {
     width: BOARD_SIZE,
     height: BOARD_SIZE,
   };
+
+  const shuffleTiles = () => {
+    const shuffledTiles = shuffle(tiles);
+    setTiles(shuffledTiles);
+  }
+
+  const moveTiles = (tileIndex) => {
+    const emptySlot =  tiles.indexOf(tiles.length - 1);
+    if(canMoveTile( tileIndex, emptySlot)) {
+      const movedTiles = moveTile(tiles, tileIndex, emptySlot);
+      setTiles(movedTiles);
+    }
+  }
+
+  const startClick = () => {
+    shuffleTiles();
+    setIsStarted(true);
+  }
+
+  const shuffleClick = () => {
+    shuffleTiles();
+  }
+
+  const tileClick = (index) => {
+    moveTiles(index);
+  }
+
+  const playerWins = isSolved(tiles);
   
   return (
     <>
@@ -22,9 +52,13 @@ function Board() {
             tile={tile}
             width={pieceWidth}
             height={pieceHeight}
+            tileClick={tileClick}
           />
         ))}
       </ul>
+      {playerWins && isStarted && <div>Puzzle solved 🎉</div>}
+      {!isStarted ? (<button onClick={() => startClick()}>Start game</button>) : 
+      (<button onClick={() => shuffleClick()}>Restart game</button>)}
     </>
   )
 }
