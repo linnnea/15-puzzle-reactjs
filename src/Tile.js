@@ -28,6 +28,8 @@ function Tile(props) {
             width: tileStyle.width,
             height: tileStyle.height,
             transform: `translate3d(${translateX}px, ${translateY}px, 0)`,
+            background: tile === index ? 'var(--primary' : 'var(--dark',
+            color: tile === index ? 'var(--dark' : 'var(--light',
             // Empty slot
             opacity: tile === TILE_SUM - 1 ? 0 : 1,
             cursor: tile === TILE_SUM - 1 ? '' : 'pointer',

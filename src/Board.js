@@ -56,9 +56,11 @@ function Board() {
           />
         ))}
       </ul>
-      {playerWins && isStarted && <div>Puzzle solved 🎉</div>}
-      {!isStarted ? (<button onClick={() => startClick()}>Start game</button>) : 
-      (<button onClick={() => shuffleClick()}>Restart game</button>)}
+      {playerWins && isStarted && <div className="alert-win">Player wins 🎉</div> }
+      {!isStarted ? 
+        (<button onClick={() => startClick()}>Start game</button>) : 
+        (<button onClick={() => shuffleClick()}>Restart game</button>)
+      }
     </>
   )
 }
