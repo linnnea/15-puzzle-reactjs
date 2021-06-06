@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TILE_SUM, ROW_SUM, BOARD_SIZE } from "./constants";
-import Tile from './Tile';
 import { shuffle, canMoveTile, moveTile, isSolved } from './helpers/gameLogic';
+import Tile from './Tile';
 
 function Board() {
   const [ tiles, setTiles ] = useState([...Array(TILE_SUM).keys()]);
