@@ -29,7 +29,7 @@ export function shuffle(tiles) {
       .sort(() => Math.random() - 0.5),
     tiles.length - 1,
   ];
-  return isSolvable(shuffledTiles) && !isSolved(shuffledTiles)
+  return isQuizSolvable(shuffledTiles) && !isQuizSolved(shuffledTiles)
     ? shuffledTiles
     : shuffle(shuffledTiles);
 }
@@ -47,8 +47,8 @@ export function moveTile(tiles, src, dest) {
   return tilesResult;
 }
 
-// Shuffle the keys until they are solvable
-export function isSolvable(tiles) {
+// Shuffle the tiles until they are solvable
+export function isQuizSolvable(tiles) {
   let item = 1;
   for (let i = 1, l = TILE_SUM - 1; i <= l; i++) {
     for (let j = i + 1, m = l + 1; j <= m; j++) {
@@ -58,7 +58,7 @@ export function isSolvable(tiles) {
   return Math.round(item) === 1;
 }
 
-export function isSolved(tiles) {
+export function isQuizSolved(tiles) {
   for (let i = 0, l = tiles.length; i < l; i++) {
     if (tiles[i] !== i) {
       return false;
