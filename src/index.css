@@ -60,3 +60,12 @@ button:hover {
   color: var(--dark);
   text-align: center;
 }
+.timerDisplay {
+  padding-right: .5em;
+}
+.timer-btn {
+  background: var(--primary);
+  color: var(--dark);
+  padding: 1.6em;
+  width: 13em;
+}
