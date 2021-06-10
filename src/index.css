@@ -63,11 +63,11 @@ button,
 }
 .start-btn,
 .timerDisplay {
-	width: 14rem;
+	width: 10rem;
 }
 button,
 .timerDisplay {
-	height: 4rem;
+	height: 3rem;
 	font-size: 1rem;
 	opacity: 0.9;
 	border: none !important;
@@ -114,4 +114,14 @@ button:hover {
 }
 .timer-btn svg:hover {
 	opacity: 1;
+}
+@media (min-width: 768px) {
+	button,
+	.timerDisplay {
+		height: 4rem;
+		width: 14em;
+	}
+	.start-btn {
+		width: 16em;
+	}
 }
