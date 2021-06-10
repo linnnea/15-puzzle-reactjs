@@ -1,122 +1,154 @@
-import React, { useState } from "react";
-import { TILE_SUM, ROW_SUM, BOARD_SIZE } from "./constants";
-import { shuffle, canMoveTile, moveTile, isQuizSolved } from './helpers/gameLogic';
+import React, { useState } from 'react';
+import ShuffleRoundedIcon from '@material-ui/icons/ShuffleRounded';
+import PowerSettingsNewRoundedIcon from '@material-ui/icons/PowerSettingsNewRounded';
+import { TILE_SUM, ROW_SUM, BOARD_SIZE } from './constants';
+import Alert from './Alert';
+import {
+	shuffle,
+	canMoveTile,
+	moveTile,
+	isQuizSolved,
+} from './helpers/gameLogic';
 import Tile from './Tile';
 import Timer from './Timer';
 import TimerBtn from './TimerBtn';
 
 function Board() {
-  const [ tiles, setTiles ] = useState([...Array(TILE_SUM).keys()]);
-  const [ isStarted, setIsStarted ] = useState(false);
-  const [time, setTime] = useState({ms: 0, s: 0, m: 0, h: 0});
-  const [interv, setInterv] = useState();
-  const [status, setStatus] = useState(0);
+	const [tiles, setTiles] = useState([...Array(TILE_SUM).keys()]);
+	const [isStarted, setIsStarted] = useState(false);
+	const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
+	const [interv, setInterv] = useState();
+	const [status, setStatus] = useState(0);
 
-  // Not started = 0
-  // Started = 1
-  // Paused = 2
+	// Timer status
+	// Not started = 0
+	// Started = 1
+	const pausedGame = status === 2;
 
-  const pieceWidth = Math.round( BOARD_SIZE / ROW_SUM );
-  const pieceHeight = Math.round( BOARD_SIZE / ROW_SUM );
-  const style = {
-    width: BOARD_SIZE,
-    height: BOARD_SIZE,
-  };
+	const pieceWidth = Math.round(BOARD_SIZE / ROW_SUM);
+	const pieceHeight = Math.round(BOARD_SIZE / ROW_SUM);
 
-  const shuffleTiles = () => {
-    const shuffledTiles = shuffle(tiles);
-    setTiles(shuffledTiles);
-  }
+	const boardStyle = {
+		width: BOARD_SIZE - 15,
+		height: BOARD_SIZE - 15,
+	};
 
-  const moveTiles = (tileIndex) => {
-    const emptySlot =  tiles.indexOf(tiles.length - 1);
-    if(canMoveTile( tileIndex, emptySlot)) {
-      const movedTiles = moveTile(tiles, tileIndex, emptySlot);
-      setTiles(movedTiles);
-    }
-  }
+	const shuffleTiles = () => {
+		const shuffledTiles = shuffle(tiles);
+		setTiles(shuffledTiles);
+	};
 
-  const startClick = () => {
-    start();
-    shuffleTiles();
-    setIsStarted(true);
-  } 
+	const moveTiles = (tileIndex) => {
+		const emptySlot = tiles.indexOf(tiles.length - 1);
+		if (canMoveTile(tileIndex, emptySlot)) {
+			const movedTiles = moveTile(tiles, tileIndex, emptySlot);
+			setTiles(movedTiles);
+		}
+	};
 
-  const shuffleClick = () => {
-    shuffleTiles();
-  }
+	const startClick = () => {
+		startTimer();
+		shuffleTiles();
+		setIsStarted(true);
+	};
 
-  const tileClick = (index) => {
-    moveTiles(index);
-  }
+	const shuffleClick = () => {
+		shuffleTiles();
+	};
 
-  const playerWins = isQuizSolved(tiles);
+	const tileClick = (index) => {
+		if (pausedGame) {
+			return;
+		} else {
+			moveTiles(index);
+		}
+	};
 
-  const start = () => {
-    run();
-    setStatus(1);
-    setInterv(setInterval(run, 10));
-  };
+	const playerWins = isQuizSolved(tiles);
 
-  let updatedMs = time.ms, updatedS = time.s, updatedM = time.m, updatedH = time.h;
+	const startTimer = () => {
+		runTimer();
+		setStatus(1);
+		setInterv(setInterval(runTimer, 10));
+	};
 
-  const run = () => {
-    if(updatedM === 60){
-      updatedH++;
-      updatedM = 0;
-    }
-    if(updatedS === 60){
-      updatedM++;
-      updatedS = 0;
-    }
-    if(updatedMs === 100){
-      updatedS++;
-      updatedMs = 0;
-    }
-    updatedMs++;
-    return setTime({ms: updatedMs, s: updatedS, m: updatedM, h: updatedH});
-  };
+	let updatedMs = time.ms,
+		updatedS = time.s,
+		updatedM = time.m,
+		updatedH = time.h;
 
-  const pause = () => {
-    clearInterval(interv);
-    setStatus(2);
-  };
+	const runTimer = () => {
+		if (updatedM === 60) {
+			updatedH++;
+			updatedM = 0;
+		}
+		if (updatedS === 60) {
+			updatedM++;
+			updatedS = 0;
+		}
+		if (updatedMs === 100) {
+			updatedS++;
+			updatedMs = 0;
+		}
+		updatedMs++;
+		return setTime({ ms: updatedMs, s: updatedS, m: updatedM, h: updatedH });
+	};
 
-  const reset = () => {
-    clearInterval(interv);
-    setStatus(0);
-    setTime({ms: 0, s: 0, m: 0, h: 0});
-    shuffleTiles();
-    setIsStarted(false);
-  };
+	const pauseTimer = () => {
+		clearInterval(interv);
+		setStatus(2);
+	};
 
-  const resume = () => start();
-  
-  return (
-    <>
-      <Timer time={time} />
-      <ul style={style} className="board">
-        {tiles.map((tile, index) => (
-          <Tile
-            key={tile}
-            index={index}
-            tile={tile}
-            width={pieceWidth}
-            height={pieceHeight}
-            tileClick={tileClick}
-          />
-        ))}
-      </ul>
-      <div className="buttons">
-        <TimerBtn status={status} pause={pause} reset={reset} resume={resume} />
-        {playerWins && isStarted && <div className="alert-win">Player wins 🎉</div> }
-        {!isStarted ? 
-          (<button start={start} onClick={() => startClick()}>Start game</button>) : 
-          (<button onClick={() => shuffleClick()}>Shuffle</button>)
-        }
-      </div>
-    </>
-  )
+	const resetTimer = () => {
+		clearInterval(interv);
+		setStatus(0);
+		setTime({ ms: 0, s: 0, m: 0, h: 0 });
+		shuffleTiles();
+		setIsStarted(false);
+	};
+
+	const resumeGame = () => startTimer();
+
+	return (
+		<>
+			<Timer time={time} />
+			<ul style={boardStyle} className="board">
+				{tiles.map((tile, index) => (
+					<Tile
+						key={tile}
+						index={index}
+						tile={tile}
+						width={pieceWidth}
+						height={pieceHeight}
+						tileClick={tileClick}
+					/>
+				))}
+			</ul>
+			{playerWins && isStarted && <Alert alertText="Player wins 🎉" />}
+			{pausedGame ? <Alert alertText="PAUSED" /> : ''}
+			<div className="buttons">
+				{!isStarted ? (
+					<button className="start-btn" onClick={() => startClick()}>
+						Start game
+					</button>
+				) : (
+					<button className="timer-btn" onClick={() => shuffleClick()}>
+						<ShuffleRoundedIcon />
+					</button>
+				)}
+				<div className="buttons">
+					<TimerBtn status={status} pause={pauseTimer} resume={resumeGame} />
+					{isStarted ? (
+						<button className="timer-btn" onClick={resetTimer}>
+							<PowerSettingsNewRoundedIcon />
+						</button>
+					) : (
+						''
+					)}
+				</div>
+			</div>
+		</>
+	);
 }
 
-export default Board 
+export default Board;
