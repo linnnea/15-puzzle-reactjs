@@ -1,26 +1,31 @@
-import React from 'react'
+import React from 'react';
+import PauseRoundedIcon from '@material-ui/icons/PauseRounded';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 
 function TimerBtn(props) {
-  return (
-    <div className="">
-      {(props.status === 1)? 
-        <div>
-          <button className="timer-btn pause"
-            onClick={props.pause}>Pause</button>
-        </div> : ""
-      }
+	return (
+		<div>
+			{props.status === 1 ? (
+				<div>
+					<button className="timer-btn" onClick={props.pause}>
+						<PauseRoundedIcon />
+					</button>
+				</div>
+			) : (
+				''
+			)}
 
-     {(props.status === 2)? 
-        <div>
-          <button className="timer-btn resume"
-            onClick={props.resume}>Resume</button>
-          <button className="timer-btn quit"
-            onClick={props.reset}>Quit</button>
-        </div> : ""
-      }
-     
-    </div>
-  )
+			{props.status === 2 ? (
+				<div>
+					<button className="timer-btn" onClick={props.resume}>
+						<PlayArrowRoundedIcon />
+					</button>
+				</div>
+			) : (
+				''
+			)}
+		</div>
+	);
 }
 
-export default TimerBtn
+export default TimerBtn;
