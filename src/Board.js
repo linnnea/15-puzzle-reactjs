@@ -66,10 +66,7 @@ function Board() {
 		}
 	};
 
-	const playerWins = () => {
-		isQuizSolved(tiles);
-		pauseTimer();
-	};
+	const playerWins = isQuizSolved(tiles);
 
 	const startTimer = () => {
 		runTimer();
