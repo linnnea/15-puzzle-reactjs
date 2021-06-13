@@ -15,7 +15,8 @@ import TimerBtn from './TimerBtn';
 
 function Board() {
 	const [tiles, setTiles] = useState([...Array(TILE_SUM).keys()]);
-	const [isStarted, setIsStarted] = useState(false);
+	const [started, setStarted] = useState(false);
+	const [disabled, setDisabled] = useState(false);
 	const [time, setTime] = useState({ ms: 0, s: 0, m: 0, h: 0 });
 	const [interv, setInterv] = useState();
 	const [status, setStatus] = useState(0);
@@ -49,7 +50,8 @@ function Board() {
 	const startClick = () => {
 		startTimer();
 		shuffleTiles();
-		setIsStarted(true);
+		setStarted(true);
+		setDisabled(false);
 	};
 
 	const shuffleClick = () => {
@@ -64,7 +66,10 @@ function Board() {
 		}
 	};
 
-	const playerWins = isQuizSolved(tiles);
+	const playerWins = () => {
+		isQuizSolved(tiles);
+		pauseTimer();
+	};
 
 	const startTimer = () => {
 		runTimer();
@@ -97,6 +102,7 @@ function Board() {
 	const pauseTimer = () => {
 		clearInterval(interv);
 		setStatus(2);
+		setDisabled(true);
 	};
 
 	const resetTimer = () => {
@@ -104,10 +110,13 @@ function Board() {
 		setStatus(0);
 		setTime({ ms: 0, s: 0, m: 0, h: 0 });
 		shuffleTiles();
-		setIsStarted(false);
+		setStarted(false);
 	};
 
-	const resumeGame = () => startTimer();
+	const resumeGame = () => {
+		startTimer();
+		setDisabled(false);
+	};
 
 	return (
 		<>
@@ -124,21 +133,25 @@ function Board() {
 					/>
 				))}
 			</ul>
-			{playerWins && isStarted && <Alert alertText="Player wins 🎉" />}
+			{playerWins && started && <Alert alertText="Player wins 🎉" />}
 			{pausedGame ? <Alert alertText="PAUSED" /> : ''}
 			<div className="buttons">
-				{!isStarted ? (
+				{!started ? (
 					<button className="start-btn" onClick={() => startClick()}>
 						Start game
 					</button>
 				) : (
-					<button className="timer-btn" onClick={() => shuffleClick()}>
+					<button
+						disabled={disabled}
+						className="timer-btn"
+						onClick={() => shuffleClick()}
+					>
 						<ShuffleRoundedIcon />
 					</button>
 				)}
 				<div className="buttons">
 					<TimerBtn status={status} pause={pauseTimer} resume={resumeGame} />
-					{isStarted ? (
+					{started ? (
 						<button className="timer-btn" onClick={resetTimer}>
 							<PowerSettingsNewRoundedIcon />
 						</button>
